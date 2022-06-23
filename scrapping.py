@@ -66,7 +66,7 @@ def collecting_contratacion_data_from_aena(output:str,n_jobs=1):
         soup = BeautifulSoup(page.text,'html.parser')
         main_table= soup.find('table', id='Taperturas')
         rows = main_table.findAll('tr')
-
+        values=[]
         for row in rows[1:]:
             
             cells_raw = row.findAll('td')
@@ -79,8 +79,10 @@ def collecting_contratacion_data_from_aena(output:str,n_jobs=1):
             cells['url_with_details']=cells_raw[2].find('a', href=True).get('href')
 
             details=(get_details_from_extra_url(cells['url_with_details']))
-            return {**cells, **details}
-             
+            information={**cells, **details}
+            values.append(information)
+        return values
+
     if n_jobs==1:
         values=[collect_info_per_page(page) for page in tqdm(range(1,120),desc=' doing scrapping per page') ]
     else:   
@@ -88,7 +90,7 @@ def collecting_contratacion_data_from_aena(output:str,n_jobs=1):
             page) for page in tqdm(range(1,120),desc=' doing scrapping per page')   
         )
         
-
+    values = [x for xs in values for x in xs]
     df=pd.DataFrame(values)
     df.to_csv(output,index=False)
 
