@@ -3,7 +3,9 @@ from bs4 import BeautifulSoup
 import pandas as pd
 from tqdm import tqdm
 import os
-def collecting_contratacion_data_from_aena(output:str):
+from joblib import Parallel, delayed
+
+def collecting_contratacion_data_from_aena(output:str,n_jobs=1):
     main_url='https://contratacion.aena.es/contratacion/'
 
     def get_details_from_extra_url(url_with_details:str)->dict:
@@ -53,7 +55,7 @@ def collecting_contratacion_data_from_aena(output:str):
     # headers.append('url_with_details')
     url = 'https://contratacion.aena.es/contratacion/principal'
     values=[]
-    for page in tqdm(range(1,119),desc=' doing scrapping per page'): #until 120 take this value from the website
+    def collect_info_per_page(page):
         url_update=url.replace('{replace_me}',str(page))
         payload={
             'portal': 'contratos',
@@ -78,7 +80,14 @@ def collecting_contratacion_data_from_aena(output:str):
 
             details=(get_details_from_extra_url(cells['url_with_details']))
             information={**cells, **details}
-            values.append(information)
+            return information
+        if n_jobs==1:
+            values=[collect_info_per_page(page) for page in tqdm(range(1,120),desc=' doing scrapping per page') ]
+        else:   
+            values=Parallel(n_jobs=n_jobs)(delayed(collect_info_per_page)(
+                page) for page in tqdm(range(1,120),desc=' doing scrapping per page')   
+            )
+        
 
     df=pd.DataFrame(values)
     df.to_csv(output,index=False)
@@ -86,4 +95,5 @@ def collecting_contratacion_data_from_aena(output:str):
 folder_with_data='data'
 name_file='results.csv'
 output=os.path.join(folder_with_data,name_file)
-collecting_contratacion_data_from_aena(output)
+n_jobs=10
+collecting_contratacion_data_from_aena(output,n_jobs=10)
