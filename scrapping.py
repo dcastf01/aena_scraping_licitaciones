@@ -67,7 +67,7 @@ def collecting_contratacion_data_from_aena(output:str,n_jobs=1):
         main_table= soup.find('table', id='Taperturas')
         rows = main_table.findAll('tr')
 
-        for row in tqdm(rows[1:],desc='doing scrapping per row'):
+        for row in rows[1:]:
             
             cells_raw = row.findAll('td')
             assert len(cells_raw)==len(headers),\
@@ -79,21 +79,21 @@ def collecting_contratacion_data_from_aena(output:str,n_jobs=1):
             cells['url_with_details']=cells_raw[2].find('a', href=True).get('href')
 
             details=(get_details_from_extra_url(cells['url_with_details']))
-            information={**cells, **details}
-            return information
-        if n_jobs==1:
-            values=[collect_info_per_page(page) for page in tqdm(range(1,120),desc=' doing scrapping per page') ]
-        else:   
-            values=Parallel(n_jobs=n_jobs)(delayed(collect_info_per_page)(
-                page) for page in tqdm(range(1,120),desc=' doing scrapping per page')   
-            )
+            return {**cells, **details}
+             
+    if n_jobs==1:
+        values=[collect_info_per_page(page) for page in tqdm(range(1,120),desc=' doing scrapping per page') ]
+    else:   
+        values=Parallel(n_jobs=n_jobs)(delayed(collect_info_per_page)(
+            page) for page in tqdm(range(1,120),desc=' doing scrapping per page')   
+        )
         
 
     df=pd.DataFrame(values)
     df.to_csv(output,index=False)
 
 folder_with_data='data'
-name_file='results.csv'
+name_file='raw_data.csv'
 output=os.path.join(folder_with_data,name_file)
 n_jobs=10
 collecting_contratacion_data_from_aena(output,n_jobs=10)
