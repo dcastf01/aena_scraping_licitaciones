@@ -25,11 +25,14 @@ def get_details_from_extra_url(url_with_details:str)->dict:
         else:
             continue
         if column_name=='Fechas contrato:':
-            values['Fecha de inicio']=children_value.contents[2].text.strip()
+            #clean fechas contrato
+            values['Fecha de inicio']=children_value.contents[2].text.strip() 
             values['Fecha fin actual']=children_value.contents[4].text.strip()
+            continue
             #arreglar también si tiene adjudicatario y otra cosa más
         if column_name=='Identidad del adjudicatario:':
-            print('hi')
+            values['NIF']=children_value.contents[2].text.strip()
+            values['Razón social:']=children_value.contents[4].text.strip()
         if children_value:
             value=children_value.text.strip()
         else:
@@ -54,7 +57,7 @@ headers=[ column.text.strip() for column in main_table.find_all('th')]
 # headers.append('url_with_details')
 url = 'https://contratacion.aena.es/contratacion/principal'
 values=[]
-for page in tqdm(range(1,20),desc=' doing scrapping per page'): #until 120 take this value from the website
+for page in tqdm(range(1,119)[:5],desc=' doing scrapping per page'): #until 120 take this value from the website
     url_update=url.replace('{replace_me}',str(page))
     # driver.get(url_update)
     payload={
