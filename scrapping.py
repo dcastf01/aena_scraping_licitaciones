@@ -97,5 +97,5 @@ def collecting_contratacion_data_from_aena(output:str,n_jobs=1):
 folder_with_data='data'
 name_file='raw_data.csv'
 output=os.path.join(folder_with_data,name_file)
-n_jobs=10
-collecting_contratacion_data_from_aena(output,n_jobs=10)
+n_jobs=-1
+collecting_contratacion_data_from_aena(output,n_jobs=n_jobs)
