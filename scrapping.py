@@ -5,7 +5,16 @@ from tqdm import tqdm
 import os
 from joblib import Parallel, delayed
 
-def collecting_contratacion_data_from_aena(output:str,n_jobs=1):
+def collecting_contratacion_data_from_aena(output:str,n_jobs:int=1):
+    """Function to collect the data from aena and create a csv with variable output
+
+    Args:
+        output (str): name of a csv file as string 
+        n_jobs (int, optional): number jobs in parallel. Defaults to 1.
+
+    Returns:
+         create a csv
+    """    
     main_url='https://contratacion.aena.es/contratacion/'
 
     def get_details_from_extra_url(url_with_details:str)->dict:
