@@ -103,8 +103,9 @@ def collecting_contratacion_data_from_aena(output:str,n_jobs:int=1):
     df=pd.DataFrame(values)
     df.to_csv(output,index=False)
 
-folder_with_data='data'
-name_file='raw_data.csv'
-output=os.path.join(folder_with_data,name_file)
-n_jobs=-1
-collecting_contratacion_data_from_aena(output,n_jobs=n_jobs)
+if __name__=='__main__':
+    folder_with_data='data'
+    name_file='raw_data.csv'
+    output=os.path.join(folder_with_data,name_file)
+    n_jobs=-1
+    collecting_contratacion_data_from_aena(output,n_jobs=n_jobs)
