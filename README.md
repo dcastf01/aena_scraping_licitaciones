@@ -14,4 +14,5 @@ In this file we do the web scrapping and to do it we need to create a request se
 
 ## clean_data.ipynb:
 
-dd
+#checkear está página para responder lo de los insights
+https://www.hacienda.gob.es/RSC/OIReScon/informe-anual-supervision-2020/ias-2020.pdf
